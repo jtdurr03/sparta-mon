@@ -8,3 +8,5 @@ A hacker-style, ncurses-based system monitor for Raspberry Pi / Debian Linux.
 ```bash
 sudo apt update
 sudo apt install -y build-essential libncursesw5-dev
+
+eof
