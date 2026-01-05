@@ -1,0 +1,35 @@
+name: build-windows
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  windows-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-make
+
+      - name: Build (MinGW)
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build -G "MinGW Makefiles"
+          cmake --build build --config Release
+          mkdir -p dist
+          cp build/sparta-mon.exe dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sparta-mon-windows-x64
+          path: dist/sparta-mon.exe
