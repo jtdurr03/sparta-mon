@@ -13,3 +13,18 @@ Priority: optional
 Description: Sparta Mon - ncurses system monitor
  A compact 3x2 panel live monitor for CPU/MEM/TEMP/DISK/NET and tasks.
 
+Package: sparta-mon
+Version: 0.1.0
+Architecture: amd64
+Maintainer: runner
+Depends: libc6, libncursesw6 | libncursesw5
+Filename: ./sparta-mon_0.1.0_amd64.deb
+Size: 15198
+MD5sum: 942c6b8236c83f6476b064c2d7bb864a
+SHA1: 494d24dde0b0275dfd2397d8538b2a4f7088fa83
+SHA256: 885ec561462db009e30972077bf20dad0afb13232c6557440e5bf4cfe32c43a7
+Section: utils
+Priority: optional
+Description: Sparta Mon - ncurses system monitor
+ A compact 3x2 panel live monitor for CPU/MEM/TEMP/DISK/NET and tasks.
+
