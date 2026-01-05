@@ -1,0 +1,36 @@
+name: build-amd64-deb
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to upload amd64 .deb to"
+        required: true
+        default: "v0.1.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential dpkg-dev libncurses-dev
+
+      - name: Build deb
+        run: |
+          make deb
+          ls -lah dist/*.deb
+
+      - name: Upload amd64 deb to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          files: dist/*_amd64.deb
