@@ -1,0 +1,16 @@
+# binaries / build output
+sparta-mon
+*.o
+dist/
+
+# deb packages
+*.deb
+*.buildinfo
+*.changes
+
+# editor / OS junk
+*~
+.*.swp
+.*.swo
+.vscode/
+.DS_Store
