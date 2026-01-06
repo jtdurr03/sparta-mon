@@ -1,0 +1,51 @@
+name: build-windows
+
+on:
+  push:
+    branches: [ windows ]
+  workflow_dispatch:
+
+jobs:
+  windows-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: MSYS2 (mingw64)
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+
+      - name: Debug: show deps
+        shell: msys2 {0}
+        run: |
+          pwd
+          git submodule status --recursive || true
+          ls -lah
+          ls -lah deps || true
+          ls -lah deps/PDCurses || true
+          ls -lah deps/PDCurses/pdcurses || true
+          ls -lah deps/PDCurses/wincon || true
+
+      - name: Build (Ninja)
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          mkdir -p dist
+          # don't guess where the exe is — find it
+          find build -name "sparta-mon.exe" -print -exec cp {} dist/ \;
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sparta-mon-windows-x64
+          path: dist/sparta-mon.exe
