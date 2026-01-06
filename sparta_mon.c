@@ -1,5 +1,9 @@
 #define _GNU_SOURCE
-#include <ncurses.h>
+#if defined(_WIN32) || defined(_WIN64)
+  #include <curses.h>   // PDCurses on Windows
+#else
+  #include <ncurses.h>  // ncurses on Linux
+#endif
 #include <locale.h>
 #include <dirent.h>
 #include <ctype.h>
