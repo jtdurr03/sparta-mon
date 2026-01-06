@@ -1,9 +1,19 @@
 #define _GNU_SOURCE
+<<<<<<< Updated upstream
 #if defined(_WIN32) || defined(_WIN64)
   #include <curses.h>   // PDCurses on Windows
 #else
   #include <ncurses.h>  // ncurses on Linux
 #endif
+=======
+#ifdef _WIN32
+#include <curses.h>   // PDCurses header
+#include <windows.h>
+#else
+#include <ncurses.h>
+#endif
+
+>>>>>>> Stashed changes
 #include <locale.h>
 #include <dirent.h>
 #include <ctype.h>

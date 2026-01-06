@@ -17,3 +17,4 @@ dist/
 
 # local backups
 *.bak.*
+sparta_mon.c.bak.*
