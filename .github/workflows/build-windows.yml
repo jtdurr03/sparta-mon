@@ -1,20 +1,26 @@
-name: build-windows
+name: Build Windows (x64)
 
 on:
   push:
-    branches: [ windows ]
+    branches: [ "windows" ]
   workflow_dispatch:
 
 jobs:
-  windows-x64:
+  build:
     runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive
 
-      - name: MSYS2 (mingw64)
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: MSYS2 (MINGW64) setup
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -25,27 +31,27 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
 
-      - name: Debug: show deps
-        shell: msys2 {0}
-        run: |
-          pwd
-          git submodule status --recursive || true
-          ls -lah
-          ls -lah deps || true
-          ls -lah deps/PDCurses || true
-          ls -lah deps/PDCurses/pdcurses || true
-          ls -lah deps/PDCurses/wincon || true
+      - name: Configure (CMake + Ninja)
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build (Ninja)
-        shell: msys2 {0}
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Package
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-          cmake --build build
           mkdir -p dist
-          # don't guess where the exe is — find it
-          find build -name "sparta-mon.exe" -print -exec cp {} dist/ \;
+          if [ -f build/sparta-mon.exe ]; then
+            cp build/sparta-mon.exe dist/
+          else
+            echo "ERROR: build/sparta-mon.exe not found"
+            ls -la build || true
+            exit 1
+          fi
+          ls -la dist
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: sparta-mon-windows-x64
           path: dist/sparta-mon.exe
+          if-no-files-found: error
